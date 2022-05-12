@@ -1,16 +1,43 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+import psycopg2
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+app = FastAPI()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@app.get("/")
+def say_hello():
+    return "hello"
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+@app.get("/sum/")
+def sum_two(a: int, b: int) -> int:
+    return a + b
+
+
+@app.get("/number/{number}")
+def print_num(number: int):
+    return number * 2
+
+
+@app.post("/user")
+def print(name: str):
+    return {"message": f'hello,{name}'}
+
+
+@app.get('/booking/all')
+def all_bookings():
+    conn = psycopg2.connect(
+        database="startml",
+        user="robot-startml-ro",
+        password="pheiph0hahj1Vaif",
+        host="postgres.lab.karpov.courses",
+        port=6432
+    )
+    cursor = conn.cursor()
+    cursor.execute('''
+    
+    SELECT *
+    FROM "user"
+    
+    ''')
+    return cursor.fetchall()
