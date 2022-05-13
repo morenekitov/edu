@@ -14,12 +14,18 @@ class UsersGet(BaseModel):
     age: int
     country: str
     city: str
-    exp_group: str
+    exp_group: int
     os: str
     source: str
 
     class Config:
         orm_mode = True
+
+
+class SimpleUser(BaseModel):
+    name: str
+    surname: str
+    age: int
 
 
 @app.get("/")
@@ -42,7 +48,7 @@ def print(name: str):
     return {"message": f'hello,{name}'}
 
 
-@app.get('/user/all',response_model=UsersGet)
+@app.get('/user/all', response_model=List[UsersGet])
 def all_bookings():
     conn = psycopg2.connect(
         database="startml",
@@ -50,15 +56,19 @@ def all_bookings():
         password="pheiph0hahj1Vaif",
         host="postgres.lab.karpov.courses",
         port=6432,
-       cursor_factory=RealDictCursor
+        cursor_factory=RealDictCursor
     )
     cursor = conn.cursor()
     cursor.execute('''
     
     SELECT *
     FROM "user"
-    LIMIT 10;
-    
+    LIMIT 20;
     ''')
-    result = cursor.fetchall()
+    return cursor.fetchall()
     logger.info(result)
+
+
+@app.post("/user/validate")
+def validate_user(user: SimpleUser):
+    return "OK"
